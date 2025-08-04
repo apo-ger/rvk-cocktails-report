@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reykjavik Cocktails Platform - Technical Report & Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --border: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(17, 24, 39, 0.9);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Sections */
+        .section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-header .description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Technology Stack */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: border-color 0.2s;
+        }
+
+        .tech-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .tech-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .tech-card h4 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .tech-card .tech-version {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .tech-benefits {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .tech-benefits li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .tech-benefits li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        /* Roadmap */
+        .roadmap-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .phase-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .phase-card.phase-1 {
+            border-color: var(--accent-green);
+        }
+
+        .phase-card.phase-2 {
+            border-color: var(--accent-purple);
+        }
+
+        .phase-badge {
+            position: absolute;
+            top: -12px;
+            left: 2rem;
+            background: var(--bg-primary);
+            padding: 0 1rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .phase-1 .phase-badge {
+            color: var(--accent-green);
+        }
+
+        .phase-2 .phase-badge {
+            color: var(--accent-purple);
+        }
+
+        .feature-group {
+            margin-bottom: 2rem;
+        }
+
+        .feature-group h4 {
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .phase-1 .feature-list li:before {
+            color: var(--accent-green);
+        }
+
+        .phase-2 .feature-list li:before {
+            color: var(--accent-purple);
+        }
+
+        .feature-list li.implemented {
+            color: var(--text-primary);
+        }
+
+        .feature-list li.implemented:after {
+            content: "Already Implemented";
+            margin-left: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Infrastructure Options */
+        .infra-options {
+            margin-top: 2rem;
+        }
+
+        .infra-option {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .infra-option.recommended {
+            border-color: var(--accent-green);
+            position: relative;
+        }
+
+        .infra-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .infra-header h4 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .infra-cost {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .infra-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .infra-specs {
+            list-style: none;
+        }
+
+        .infra-specs li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .infra-specs li:before {
+            content: "•";
+            color: var(--accent-blue);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        /* Interactive Diagram Styles */
+        .diagram-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .diagram-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .diagram-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .diagram-btn.active {
+            background: var(--bg-secondary);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        #diagram-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+            max-height: 600px;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Warning/Info Boxes */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box h5 {
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .roadmap-container {
+                grid-template-columns: 1fr;
+            }
+
+            .infra-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.75rem;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .header {
+                position: relative;
+                background: white;
+                border-bottom: 2px solid black;
+            }
+
+            .card, .tech-card, .phase-card, .infra-option {
+                border: 1px solid black;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Reykjavik Cocktails</div>
+            <nav class="nav">
+                <a href="#tech-stack">Technology Stack</a>
+                <a href="#roadmap">Development Roadmap</a>
+                <a href="#infrastructure">Infrastructure</a>
+                <a href="#support">Post-Launch Support</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Reykjavík Cocktails Operations Platform</h1>
+                <p class="subtitle">Technical Report & Implementation Documentation</p>
+                <div class="report-meta">
+                    <span>Version 1.0</span>
+                    <span>•</span>
+                    <span>Updated: August 2025</span>
+                    <span>•</span>
+                    <span>Phase 1 Development</span>
+                </div>
+            </section>
+
+            <!-- Technology Stack -->
+            <section id="tech-stack" class="section">
+                <div class="section-header">
+                    <h2>Technology Stack</h2>
+                    <p class="description">The platform is built using cutting-edge technologies chosen for their reliability, performance, and developer ecosystem. Each technology was selected based on specific strengths that align with the project requirements.</p>
+                </div>
+
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">⚛️</div>
+                            <div>
+                                <h4>Next.js 15</h4>
+                                <div class="tech-version">React 19 Framework with App Router</div>
+                            </div>
+                        </div>
+                        <p>Next.js provides the foundation for our application, offering server-side rendering, automatic code splitting, and optimized performance out of the box. Version 15 with React 19 brings improved performance and the latest React features including enhanced server components.</p>
+                        <ul class="tech-benefits">
+                            <li>Built-in performance optimizations with automatic image optimization</li>
+                            <li>Server Components for reduced client-side JavaScript</li>
+                            <li>Incremental Static Regeneration for dynamic content</li>
+                            <li>API routes for backend functionality</li>
+                            <li>Excellent developer experience with Fast Refresh</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🗄️</div>
+                            <div>
+                                <h4>MongoDB</h4>
+                                <div class="tech-version">Document Database with Mongoose ODM</div>
+                            </div>
+                        </div>
+                        <p>MongoDB's document-based structure perfectly matches our data model where cocktails, events, and inventory items have varying attributes. This flexibility is crucial for a business where a cocktail might have 3 ingredients or 12, plus variable garnishes and preparation notes.</p>
+                        <ul class="tech-benefits">
+                            <li>Flexible schema design adapts to changing needs & requirements</li>
+                            <li>Native support for nested documents (perfect for event details)</li>
+                            <li>Powerful aggregation framework for analytics</li>
+                            <li>Built-in geospatial queries for location-based features</li>
+                            <li>Change streams for real-time updates</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🔐</div>
+                            <div>
+                                <h4>NextAuth.js v4</h4>
+                                <div class="tech-version">Complete Authentication Solution</div>
+                            </div>
+                        </div>
+                        <p>NextAuth.js provides a complete authentication solution with support for multiple providers, database sessions, and JWT tokens. It handles the complex security requirements while remaining flexible for custom needs.</p>
+                        <ul class="tech-benefits">
+                            <li>Secure by default with CSRF protection</li>
+                            <li>Support for OAuth providers (Google, etc.)</li>
+                            <li>Database sessions for enhanced security</li>
+                            <li>Role-based access control (RBAC) support</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🔧</div>
+                            <div>
+                                <h4>Zustand</h4>
+                                <div class="tech-version">Lightweight State Management</div>
+                            </div>
+                        </div>
+                        <p>Zustand provides a simple yet powerful state management solution that's perfect for our inventory and gig management needs. It offers excellent performance with minimal boilerplate, making the application responsive and maintainable.</p>
+                        <ul class="tech-benefits">
+                            <li>Lightning-fast state updates with automatic re-renders</li>
+                            <li>Simple API that's easy to understand and maintain</li>
+                            <li>Persist state to localStorage for offline capabilities</li>
+                            <li>DevTools support for debugging state changes</li>
+                            <li>No providers needed - cleaner component trees</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🔄</div>
+                            <div>
+                                <h4>React Query</h4>
+                                <div class="tech-version">Powerful Data Fetching</div>
+                            </div>
+                        </div>
+                        <p>React Query (TanStack Query) handles all server state management, providing automatic caching, background refetching, and optimistic updates for a snappy user experience.</p>
+                        <ul class="tech-benefits">
+                            <li>Automatic request deduplication</li>
+                            <li>Background data synchronization</li>
+                            <li>Optimistic updates for instant feedback</li>
+                            <li>Built-in error and loading states</li>
+                            <li>Offline support with cache persistence</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🎨</div>
+                            <div>
+                                <h4>CSS Modules</h4>
+                                <div class="tech-version">Component-Scoped Styling</div>
+                            </div>
+                        </div>
+                        <p>CSS Modules provide locally-scoped CSS by default, preventing style conflicts and making our components truly modular. Combined with CSS custom properties, we achieve a powerful theming system that supports light/dark modes seamlessly.</p>
+                        <ul class="tech-benefits">
+                            <li>Component-level style isolation </li>
+                            <li>Custom properties enable dynamic theming</li>
+                            <li>Smaller bundle size - only ship what you use</li>
+                            <li>Native browser support</li>
+                        </ul>
+                    </div>
+
+                    <!-- <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">☁️</div>
+                            <div>
+                                <h4>Vercel</h4>
+                                <div class="tech-version">Edge Network Deployment Platform</div>
+                            </div>
+                        </div>
+                        <p>Vercel, created by the makers of Next.js, provides the optimal hosting environment for our application. It offers automatic deployments, edge functions, and global CDN distribution.</p>
+                        <ul class="tech-benefits">
+                            <li>Zero-config deployments with Git integration</li>
+                            <li>Automatic SSL certificates and DDoS protection</li>
+                            <li>Edge Network with 100+ global locations</li>
+                            <li>Preview deployments for every pull request</li>
+                            <li>Built-in analytics and performance monitoring</li>
+                        </ul>
+                    </div> -->
+                </div>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 2rem; color: var(--text-primary);">Additional Core Technologies</h3>
+                <div class="tech-grid">
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">🗺️</div>
+                            <div>
+                                <h4>Mapbox GL</h4>
+                                <div class="tech-version">Interactive Map Visualization</div>
+                            </div>
+                        </div>
+                        <p>Mapbox GL provides elegant, interactive maps showing all gig locations across Iceland, with custom markers and real-time filtering capabilities.</p>
+                        <ul class="tech-benefits">
+                            <li>Vector maps with smooth zooming</li>
+                            <li>Custom styling</li>
+                            <li>Clustering for multiple locations</li>
+                            <li>Mobile gesture support</li>
+                            <li>Offline map caching potential</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="tech-card-header">
+                            <div class="tech-icon">📅</div>
+                            <div>
+                                <h4>FullCalendar</h4>
+                                <div class="tech-version">Professional Calendar Component</div>
+                            </div>
+                        </div>
+                        <p>FullCalendar powers our event scheduling system with a feature-rich, interactive calendar that integrates smoothly with our gig management workflow.</p>
+                        <ul class="tech-benefits">
+                            <li>Multiple view modes (month, week, day, list)</li>
+                            <!-- <li>Drag-and-drop event management</li>
+                            <li>Recurring event support</li> -->
+                            <li>Mobile-responsive design</li>
+                            <li>Real-time updates</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 2rem; color: var(--text-primary);">Interactive Architecture Diagrams</h3>
+                
+                <div class="diagram-selector">
+                    <button class="diagram-btn active" data-diagram="architecture">🏗️ System Architecture</button>
+                    <button class="diagram-btn" data-diagram="dataflow">🔄 Data Flow</button>
+                </div>
+
+                <div id="diagram-container"></div>
+
+            </section>
+
+            <!-- Development Roadmap -->
+            <section id="roadmap" class="section">
+                <div class="section-header">
+                    <h2>Development Roadmap</h2>
+                    <p class="description">The project is divided into two distinct phases, with Phase 1 focusing on core operational features and Phase 2 expanding into analytics, client portals, and advanced automation. Some Phase 2 features have already been implemented as part of the foundation work.</p>
+                </div>
+
+                <div class="roadmap-container">
+                    <div class="phase-card phase-1">
+                        <span class="phase-badge">PHASE 1</span>
+                        <h3 style="margin-bottom: 2rem; color: var(--text-primary);">Core Operations Platform</h3>
+                        
+                        <div class="feature-group">
+                            <h4>Gig Management System</h4>
+                            <ul class="feature-list">
+                                <li>Interactive map of Iceland with all gig locations</li>
+                                <li>Comprehensive gig details (client info, requirements, timeline)</li>
+                                <li>Staff assignment and role management</li>
+                                <li>Real-time status updates and notifications</li>
+                                <li>Document management</li>
+                            </ul>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>Inventory Management</h4>
+                            <ul class="feature-list">
+                                <li>Category-based product organization</li>
+                                <li>Automatic reorder point alerts</li>
+                                <li>Supplier information management</li>
+                            </ul>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>Mise en Place Automation</h4>
+                            <ul class="feature-list">
+                                <li>Automated preparation reports from gig details</li>
+                                <li>Ingredient quantity calculations</li>
+                                <li>Equipment and glassware checklists</li>
+                                <li>Prep timeline generation</li>
+                                <li>Shopping list creation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="phase-card phase-2">
+                        <span class="phase-badge">PHASE 2</span>
+                        <h3 style="margin-bottom: 2rem; color: var(--text-primary);">Enhanced Features & Analytics</h3>
+                        
+                        <div class="feature-group">
+                            <h4>Client Experience Portal</h4>
+                            <ul class="feature-list">
+                                <li>Key event info and details</li>
+                                <li>Live status updates</li>
+                                <li>Package extension system</li>
+                                <li>Feedback and review system</li>
+                            </ul>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>Team Management</h4>
+                            <ul class="feature-list">
+                                <li class="implemented">User authentication and authorization</li>
+                                <li class="implemented">Role-based permissions (Admin, Contractor, Client)</li>
+                                <li>Availability tracking</li>
+                                <li>Clock-in/out system</li>
+                            </ul>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>Calendar & Scheduling</h4>
+                            <ul class="feature-list">
+                                <li class="implemented">Integrated calendar view</li>
+                                <li>Conflict detection and prevention</li>
+                                <li>Recurring event support</li>
+                                <li>Team schedule visibility</li>
+
+                            </ul>
+                        </div>
+
+                        <!-- <div class="feature-group">
+                            <h4>Mobile Applications</h4>
+                            <ul class="feature-list">
+                                <li>Native iOS application</li>
+                                <li>Native Android application</li>
+                                <li>Offline synchronization</li>
+                                <li>Push notifications</li>
+                                <li>Mobile-optimized workflows</li>
+                            </ul>
+                        </div> -->
+
+                        <!-- <div class="feature-group">
+                            <h4>AI & Automation</h4>
+                            <ul class="feature-list">
+                                <li>Voice-controlled gig creation</li>
+                                <li>Smart inventory predictions</li>
+                                <li>Automated supplier ordering</li>
+                                <li>Chatbot for client inquiries</li>
+                                <li>Recipe suggestions based on inventory</li>
+                            </ul>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 2rem;">
+                    <h5>ℹ️ About Feature Implementation</h5>
+                    <p>Features marked as "Already Implemented" were built as part of the core platform architecture. While they are functional, they will be enhanced and refined when Phase 2 officially begins. This approach ensures a solid foundation while allowing for future expansion.</p>
+                </div>
+            </section>
+
+            <!-- Infrastructure Options -->
+            <section id="infrastructure" class="section">
+                <div class="section-header">
+                    <h2>Infrastructure & Hosting Options</h2>
+                </div>
+
+                <div class="card">
+                    <h3>Infrastructure Requirements Analysis</h3>
+                    <p>The rvk Cocktails platform requires infrastructure that can handle:</p>
+                    <ul style="list-style: none; margin: 1rem 0;">
+                        <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Concurrent users: 10-50 members</li>
+                        <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Data storage: Approximately 1-2GB for inventory, events, and reports</li>
+                        <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Uptime requirements: 99.9% availability</li>
+                        <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Security: GDPR compliance and data encryption</li>
+                    </ul>
+                </div>
+
+                <div class="infra-options">
+                    <div class="infra-option recommended">
+                        <div class="infra-header">
+                            <h4>Cloud Deployment (Recommended)</h4>
+                            <!-- <div class="infra-cost">$36.50/month</div> -->
+                        </div>
+                        <p>The recommended approach leverages best-in-class cloud services optimized for our technology stack. This configuration provides excellent performance, automatic scaling, and minimal maintenance overhead.</p>
+                        
+                        <div class="infra-details">
+                            <div>
+                                <h5 style="color: var(--accent-green); margin-bottom: 1rem;">Application Hosting: Vercel Pro</h5>
+                                <ul class="infra-specs">
+                                    <li>Automatic deployments from Git</li>
+                                    <li>Global edge network (100+ locations)</li>
+                                    <li>Automatic SSL certificates</li>
+                                    <li>DDoS protection included</li>
+                                    <li>99.99% uptime SLA</li>
+                                    <li>Preview deployments for testing</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 style="color: var(--accent-green); margin-bottom: 1rem;">Database: MongoDB Atlas M2</h5>
+                                <ul class="infra-specs">
+                                    <li>2GB storage (expandable)</li>
+                                    <li>Automated daily backups</li>
+                                    <li>Point-in-time recovery</li>
+                                    <li>Built-in monitoring</li>
+                                    <li>Encryption at rest and in transit</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Post-Launch Support -->
+            <section id="support" class="section">
+                <div class="section-header">
+                    <h2>Post-Launch Support Structure</h2>
+                    <p class="description">A comprehensive support plan ensures the platform remains stable, secure, and aligned with evolving requirements and needs.</p>
+                </div>
+
+                <div class="card">
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h4 style="color: var(--accent-green); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                🛡️ Platform Stability & Security
+                            </h4>
+                            <ul style="list-style: none; color: var(--text-secondary);">
+                                <li style="padding: 0.5rem 0;">• Bug fixes and error resolution</li>
+                                <li style="padding: 0.5rem 0;">• Security patches and updates</li>
+                                <li style="padding: 0.5rem 0;">• Performance monitoring and optimization</li>
+                                <li style="padding: 0.5rem 0;">• Database health checks and maintenance</li>
+                                <li style="padding: 0.5rem 0;">• Data backup verification</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 style="color: var(--accent-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                👥 Team Support & Training
+                            </h4>
+                            <ul style="list-style: none; color: var(--text-secondary);">
+                                <li style="padding: 0.5rem 0;">• Onboarding assistance</li>
+                                <li style="padding: 0.5rem 0;">• Weekly check-ins during transition period</li>
+                                <li style="padding: 0.5rem 0;">• Best practices guidance</li>
+                                <li style="padding: 0.5rem 0;">• Workflow optimization recommendations</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 style="color: var(--accent-purple); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                🔧 Continuous Improvement
+                            </h4>
+                            <ul style="list-style: none; color: var(--text-secondary);">
+                                <li style="padding: 0.5rem 0;">• UI/UX refinements based on feedback</li>
+                                <li style="padding: 0.5rem 0;">• Workflow adjustments for efficiency</li>
+                                <li style="padding: 0.5rem 0;">• System health reporting and insights</li>
+                                <li style="padding: 0.5rem 0;">• Feature enhancement suggestions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 2rem;">
+                    <h5>💡 Future-Proofing Your Investment</h5>
+                    <p>The platform is built with longevity in mind. The MIT license ensures you have complete ownership of the code, allowing you to engage any developer for future work if needed. All technologies chosen have strong community support and long-term viability, protecting your investment for years to come.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer style="background: var(--bg-secondary); padding: 3rem 0; margin-top: 4rem; border-top: 1px solid var(--border);">
+        <div class="container">
+            <p style="text-align: center; color: var(--text-muted);">
+                Reykjavik Cocktails Operations Platform - Technical Documentation<br>
+                Last updated: August 2025 | Version 1.0
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Color palette
+        const colors = {
+            bg: 'hsl(222, 47%, 11%)',
+            border: '#4a5568',
+            text: '#e2e8f0',
+            textSecondary: '#a0aec0',
+            blue: '#4299e1',
+            purple: '#9f7aea',
+            green: '#48bb78',
+            orange: '#ed8936'
+        };
+
+        // Initialize D3
+        const container = d3.select('#diagram-container');
+        let currentDiagram = 'architecture';
+        let svg, width, height;
+
+        // Set up dimensions
+        function updateDimensions() {
+            const rect = container.node().getBoundingClientRect();
+            width = rect.width;
+            height = rect.height;
+        }
+
+        // Create base SVG
+        function createSvg() {
+            container.select('svg').remove();
+            
+            svg = container.append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .attr('viewBox', `0 0 ${width} ${height}`);
+
+            // Add arrow marker definitions
+            const defs = svg.append('defs');
+            
+            defs.append('marker')
+                .attr('id', 'arrow')
+                .attr('viewBox', '0 0 10 10')
+                .attr('refX', 9)
+                .attr('refY', 3)
+                .attr('markerWidth', 6)
+                .attr('markerHeight', 6)
+                .attr('orient', 'auto')
+                .append('path')
+                .attr('d', 'M0,0 L0,6 L9,3 z')
+                .attr('fill', '#ffffff');
+        }
+
+        // System Architecture Diagram
+        function drawArchitectureDiagram() {
+            // Calculate responsive dimensions
+            const margin = Math.max(40, width * 0.05);
+            const diagramWidth = width - (margin * 2);
+            const centerX = width / 2;
+            
+            // Title
+            svg.append('text')
+                .attr('x', centerX)
+                .attr('y', 40)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 22)
+                .attr('font-weight', 600)
+                .attr('fill', colors.text)
+                .text('🏗️ System Architecture Overview');
+
+            const layers = [
+                {
+                    name: 'Client Layer',
+                    y: 80,
+                    x: centerX,
+                    height: 100,
+                    color: colors.blue,
+                    components: ['Web Browser', 'Zustand State', 'React Query', 'CSS Modules']
+                },
+                {
+                    name: 'Application Layer',
+                    y: 210,
+                    x: centerX,
+                    height: 100,
+                    color: colors.purple,
+                    components: ['React 19 Components', 'API Routes', 'NextAuth.js v4', 'JavaScript ES6+', 'Mapbox GL', 'FullCalendar']
+                },
+                {
+                    name: 'Data Layer',
+                    y: 340,
+                    x: centerX,
+                    height: 100,
+                    color: colors.green,
+                    components: ['MongoDB Atlas', 'Mongoose ODM', 'Change Streams']
+                },
+                {
+                    name: 'Infrastructure',
+                    y: 470,
+                    x: centerX,
+                    height: 100,
+                    color: colors.orange,
+                    components: ['Vercel Edge Network', 'SSL/TLS Security', 'Auto Scaling', 'OAuth Providers']
+                }
+            ];
+
+            // Draw each layer
+            layers.forEach((layer, layerIndex) => {
+                // Layer background - centered
+                svg.append('rect')
+                    .attr('x', margin)
+                    .attr('y', layer.y)
+                    .attr('width', diagramWidth)
+                    .attr('height', layer.height)
+                    .attr('rx', 8)
+                    .attr('fill', 'hsl(215, 25%, 15%)')
+                    .attr('stroke', colors.border)
+                    .attr('stroke-width', 2);
+
+                // Layer title
+                svg.append('text')
+                    .attr('x', margin + 20)
+                    .attr('y', layer.y + 25)
+                    .attr('font-size', 16)
+                    .attr('font-weight', 600)
+                    .attr('fill', layer.color)
+                    .text(layer.name);
+
+                // Component boxes - perfect vertical and horizontal alignment
+                const availableWidth = diagramWidth - 40;
+                const minCompWidth = 160;
+                const compSpacing = 15;
+                const componentsPerRow = Math.floor((availableWidth + compSpacing) / (minCompWidth + compSpacing));
+                const actualCompWidth = (availableWidth - (componentsPerRow - 1) * compSpacing) / componentsPerRow;
+                
+                // Calculate total components and rows needed
+                const totalComponents = layer.components.length;
+                const totalRows = Math.ceil(totalComponents / componentsPerRow);
+                
+                // Center the entire grid horizontally
+                const totalGridWidth = componentsPerRow * actualCompWidth + (componentsPerRow - 1) * compSpacing;
+                const gridStartX = centerX - (totalGridWidth / 2);
+                
+                // Center the components vertically within the layer
+                const compHeight = 35;
+                const verticalSpacing = 10;
+                const totalGridHeight = totalRows * compHeight + (totalRows - 1) * verticalSpacing;
+                const availableVerticalSpace = layer.height - 50; // Reserve space for title
+                const verticalStartY = layer.y + 35 + (availableVerticalSpace - totalGridHeight) / 2;
+
+                layer.components.forEach((comp, compIndex) => {
+                    const row = Math.floor(compIndex / componentsPerRow);
+                    const col = compIndex % componentsPerRow;
+                    
+                    // Handle last row centering if it has fewer components
+                    const componentsInThisRow = (row === totalRows - 1) 
+                        ? totalComponents - (row * componentsPerRow) 
+                        : componentsPerRow;
+                    
+                    const rowWidth = componentsInThisRow * actualCompWidth + (componentsInThisRow - 1) * compSpacing;
+                    const rowStartX = centerX - (rowWidth / 2);
+                    
+                    const x = rowStartX + col * (actualCompWidth + compSpacing);
+                    const y = verticalStartY + row * (compHeight + verticalSpacing);
+
+                    svg.append('rect')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('width', actualCompWidth)
+                        .attr('height', compHeight)
+                        .attr('rx', 6)
+                        .attr('fill', 'hsl(215, 25%, 12%)')
+                        .attr('stroke', layer.color)
+                        .attr('stroke-width', 1);
+
+                    svg.append('text')
+                        .attr('x', x + actualCompWidth / 2)
+                        .attr('y', y + compHeight / 2 + 5)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', Math.min(14, actualCompWidth / 12))
+                        .attr('font-weight', 500)
+                        .attr('fill', colors.text)
+                        .text(comp);
+                });
+
+                // Connection arrows between layers - centered
+                if (layerIndex < layers.length - 1) {
+                    const arrowY1 = layer.y + layer.height + 5;
+                    const arrowY2 = layers[layerIndex + 1].y - 5;
+                    
+                    svg.append('line')
+                        .attr('x1', centerX)
+                        .attr('y1', arrowY1)
+                        .attr('x2', centerX)
+                        .attr('y2', arrowY2)
+                        .attr('stroke', '#ffffff')
+                        .attr('stroke-width', 3)
+                        .attr('marker-end', 'url(#arrow)');
+                }
+            });
+        }
+
+        // Data Flow Diagram
+        function drawDataFlowDiagram() {
+            // Calculate responsive dimensions
+            const margin = Math.max(40, width * 0.05);
+            const centerX = width / 2;
+            
+            // Title
+            svg.append('text')
+                .attr('x', centerX)
+                .attr('y', 40)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 22)
+                .attr('font-weight', 600)
+                .attr('fill', colors.text)
+                .text('🔄 Gig to Mise en Place Data Flow');
+
+            // Responsive process layout
+            const processes = [
+                { name: 'Gig Creation', color: colors.blue, items: ['Event details', 'Guest count', 'Cocktail selection', 'Venue info'] },
+                { name: 'Recipe Analysis', color: colors.purple, items: ['Ingredient lookup', 'Standard quantities', 'Garnish requirements', 'Glassware specs'] },
+                { name: 'Auto Calculations', color: colors.green, items: ['Per Gig & Week prep reports', 'Optional extension buffer', 'Prep timeline'] },
+                { name: 'Inventory Check', color: colors.orange, items: ['Current stock', 'Availability status', 'Supplier info', 'Cost calculations'] }
+            ];
+
+            // Calculate box dimensions and positions
+            const processBoxWidth = Math.min(200, (width - margin * 2 - 60) / 4);
+            const processSpacing = (width - margin * 2 - processBoxWidth * 4) / 3;
+            
+            // Draw input processes
+            processes.forEach((process, i) => {
+                const x = margin + i * (processBoxWidth + processSpacing);
+                
+                // Process box
+                svg.append('rect')
+                    .attr('x', x)
+                    .attr('y', 80)
+                    .attr('width', processBoxWidth)
+                    .attr('height', 120)
+                    .attr('rx', 8)
+                    .attr('fill', 'hsl(215, 25%, 15%)')
+                    .attr('stroke', process.color)
+                    .attr('stroke-width', 2);
+
+                // Process title
+                svg.append('text')
+                    .attr('x', x + processBoxWidth / 2)
+                    .attr('y', 105)
+                    .attr('text-anchor', 'middle')
+                    .attr('font-size', Math.min(15, processBoxWidth / 12))
+                    .attr('font-weight', 600)
+                    .attr('fill', process.color)
+                    .text(process.name);
+
+                // Process items
+                process.items.forEach((item, j) => {
+                    svg.append('text')
+                        .attr('x', x + 15)
+                        .attr('y', 130 + j * 18)
+                        .attr('font-size', Math.min(12, processBoxWidth / 16))
+                        .attr('fill', colors.text)
+                        .text(`• ${item}`);
+                });
+
+                // Horizontal arrows between processes
+                if (i < processes.length - 1) {
+                    svg.append('line')
+                        .attr('x1', x + processBoxWidth)
+                        .attr('y1', 140)
+                        .attr('x2', x + processBoxWidth + processSpacing)
+                        .attr('y2', 140)
+                        .attr('stroke', '#ffffff')
+                        .attr('stroke-width', 3)
+                        .attr('marker-end', 'url(#arrow)');
+                }
+            });
+
+            // Central processing engine - responsive width
+            const engineWidth = Math.min(width - margin * 2, 600);
+            const engineX = centerX - engineWidth / 2;
+            
+            svg.append('rect')
+                .attr('x', engineX)
+                .attr('y', 250)
+                .attr('width', engineWidth)
+                .attr('height', 100)
+                .attr('rx', 12)
+                .attr('fill', 'hsl(215, 25%, 15%)')
+                .attr('stroke', colors.blue)
+                .attr('stroke-width', 2);
+
+            svg.append('text')
+                .attr('x', centerX)
+                .attr('y', 285)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 18)
+                .attr('font-weight', 600)
+                .attr('fill', colors.text)
+                .text('Mise en Place Engine');
+
+            svg.append('text')
+                .attr('x', centerX)
+                .attr('y', 310)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 14)
+                .attr('fill', colors.textSecondary)
+                .text('Aggregates ingredients • Calculates quantities • Optimizes prep workflow');
+
+            svg.append('text')
+                .attr('x', centerX)
+                .attr('y', 330)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 14)
+                .attr('fill', colors.textSecondary)
+                .text('Processes all data inputs and generates comprehensive outputs');
+
+            // Arrows from processes to engine - responsive positioning
+            processes.forEach((process, i) => {
+                const processX = margin + i * (processBoxWidth + processSpacing) + processBoxWidth / 2;
+                svg.append('line')
+                    .attr('x1', processX)
+                    .attr('y1', 200)
+                    .attr('x2', engineX + 100 + i * 130)
+                    .attr('y2', 250)
+                    .attr('stroke', '#ffffff')
+                    .attr('stroke-width', 2)
+                    .attr('marker-end', 'url(#arrow)');
+            });
+
+            // Output reports - responsive layout
+            const outputs = [
+                { name: 'Shopping List', color: colors.blue, items: ['Missing ingredients', 'Supplier contacts', 'Cost estimates'] },
+                { name: 'Prep Report', color: colors.purple, items: ['Timeline steps', 'Batch recipes', 'Staff assignments'] },
+                { name: 'Equipment List', color: colors.green, items: ['Bar equipment', 'Glassware count', 'Transport needs'] }
+            ];
+
+            const outputBoxWidth = Math.min(220, (width - margin * 2 - 40) / 3);
+            const outputSpacing = (width - margin * 2 - outputBoxWidth * 3) / 2;
+
+            outputs.forEach((output, i) => {
+                const x = margin + i * (outputBoxWidth + outputSpacing);
+                
+                // Output box
+                svg.append('rect')
+                    .attr('x', x)
+                    .attr('y', 420)
+                    .attr('width', outputBoxWidth)
+                    .attr('height', 100)
+                    .attr('rx', 8)
+                    .attr('fill', 'hsl(215, 25%, 15%)')
+                    .attr('stroke', output.color)
+                    .attr('stroke-width', 2);
+
+                // Output title
+                svg.append('text')
+                    .attr('x', x + outputBoxWidth / 2)
+                    .attr('y', 445)
+                    .attr('text-anchor', 'middle')
+                    .attr('font-size', Math.min(15, outputBoxWidth / 14))
+                    .attr('font-weight', 600)
+                    .attr('fill', output.color)
+                    .text(output.name);
+
+                // Output items
+                output.items.forEach((item, j) => {
+                    svg.append('text')
+                        .attr('x', x + 15)
+                        .attr('y', 470 + j * 18)
+                        .attr('font-size', Math.min(12, outputBoxWidth / 18))
+                        .attr('fill', colors.text)
+                        .text(`• ${item}`);
+                });
+
+                // Arrows from engine to outputs
+                svg.append('line')
+                    .attr('x1', engineX + 150 + i * 150)
+                    .attr('y1', 350)
+                    .attr('x2', x + outputBoxWidth / 2)
+                    .attr('y2', 420)
+                    .attr('stroke', output.color)
+                    .attr('stroke-width', 3)
+                    .attr('marker-end', 'url(#arrow)');
+            });
+        }
+
+
+
+        // Diagram switcher
+        function switchDiagram(diagramType) {
+            currentDiagram = diagramType;
+            createSvg();
+            
+            switch(diagramType) {
+                case 'architecture':
+                    drawArchitectureDiagram();
+                    break;
+                case 'dataflow':
+                    drawDataFlowDiagram();
+                    break;
+            }
+        }
+
+        // Event listeners
+        d3.selectAll('.diagram-btn').on('click', function() {
+            const btn = d3.select(this);
+            const diagram = btn.attr('data-diagram');
+            
+            // Update active state
+            d3.selectAll('.diagram-btn').classed('active', false);
+            btn.classed('active', true);
+            
+            // Switch diagram
+            switchDiagram(diagram);
+        });
+
+        // Initialize
+        updateDimensions();
+        switchDiagram('architecture');
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            updateDimensions();
+            switchDiagram(currentDiagram);
+        });
+    </script>
+</body>
+</html>
