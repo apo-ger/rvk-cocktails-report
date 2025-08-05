@@ -13,6 +13,14 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
         :root {
             --bg-primary: #0a0e1a;
             --bg-secondary: #111827;
@@ -78,6 +86,107 @@
 
         .nav a:hover {
             color: var(--accent-blue);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: transparent;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            z-index: 101;
+        }
+
+        .hamburger:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .hamburger-line {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-secondary);
+            margin: 3px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger[aria-expanded="true"] .hamburger-line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger[aria-expanded="true"] .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger[aria-expanded="true"] .hamburger-line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Mobile Navigation Overlay */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: var(--bg-secondary);
+                border-left: 1px solid var(--border);
+                flex-direction: column;
+                padding: 100px 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.3s ease;
+                z-index: 99;
+                overflow-y: auto;
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+            }
+
+            .nav.active {
+                right: 0;
+            }
+
+            .nav a {
+                font-size: 1.125rem;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border);
+                transition: all 0.2s ease;
+            }
+
+            .nav a:hover {
+                padding-left: 0.5rem;
+                color: var(--accent-blue);
+            }
+
+            /* Overlay backdrop */
+            .nav::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: -100vw;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+
+            .nav.active::before {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
 
         /* Main Content */
@@ -171,7 +280,7 @@
         /* Technology Stack */
         .tech-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 2rem;
         }
@@ -397,12 +506,21 @@
             padding: 1.5rem;
             overflow-x: auto;
             margin: 1rem 0;
+            -webkit-overflow-scrolling: touch;
         }
 
         .code-block code {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.875rem;
             color: #e2e8f0;
+            white-space: pre;
+        }
+
+        @media (max-width: 768px) {
+            .code-block {
+                padding: 1rem;
+                font-size: 0.75rem;
+            }
         }
 
         /* Interactive Diagram Styles */
@@ -505,26 +623,202 @@
         }
 
         @media (max-width: 768px) {
-            .nav {
-                display: none;
+            /* Container and general spacing */
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            /* Header adjustments */
+            .header-content {
+                padding: 1rem;
+            }
+
+            /* Hero section */
+            .hero {
+                padding: 3rem 0;
             }
 
             .hero h1 {
                 font-size: 2rem;
+                line-height: 1.2;
+            }
+
+            .hero .subtitle {
+                font-size: 1.125rem;
+                padding: 0 1rem;
+            }
+
+            .report-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            /* Section headers */
+            .section-header {
+                margin-bottom: 2rem;
             }
 
             .section-header h2 {
                 font-size: 1.75rem;
+                line-height: 1.3;
             }
 
+            .section-header .description {
+                font-size: 1rem;
+            }
+
+            /* Cards */
+            .card {
+                padding: 1.5rem;
+            }
+
+            .card h3 {
+                font-size: 1.25rem;
+            }
+
+            .card h4 {
+                font-size: 1.125rem;
+            }
+
+            /* Tech grid */
             .tech-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
+            .tech-card {
+                padding: 1.5rem;
+            }
+
+            .tech-card h4 {
+                font-size: 1.125rem;
+            }
+
+            .tech-card .tech-version {
+                font-size: 0.75rem;
+            }
+
+            /* Roadmap */
+            .phase-card {
+                padding: 2rem 1.5rem;
+            }
+
+            /* Infrastructure */
+            .infra-option {
+                padding: 1.5rem;
+            }
+
+            .infra-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .infra-header h4 {
+                font-size: 1.25rem;
+            }
+
+            .infra-cost {
+                font-size: 1.125rem;
+            }
+
+            /* Buttons and links */
+            .diagram-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .pricing-link {
+                font-size: 0.875rem;
+                padding: 0.375rem 0.75rem;
+            }
+
+            /* Timeline item fix */
             .timeline-item {
                 flex-direction: column;
                 gap: 1rem;
             }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-selector {
+                gap: 0.5rem;
+            }
+
+            .diagram-btn {
+                flex: 1;
+                min-width: 140px;
+            }
+
+            /* Footer responsive */
+            footer {
+                padding: 2rem 0 !important;
+            }
+
+            footer p {
+                font-size: 0.875rem;
+                line-height: 1.6;
+            }
+
+            /* Info boxes */
+            .info-box {
+                padding: 1rem;
+            }
+
+            .info-box h5 {
+                font-size: 0.875rem;
+            }
+
+            .info-box p {
+                font-size: 0.813rem;
+            }
+        }
+
+        /* Smooth touch scrolling for mobile */
+        @media (max-width: 768px) {
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #diagram-container {
+                min-height: 400px;
+                max-height: 400px;
+            }
+        }
+
+        /* Pricing Links */
+        .pricing-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--accent-blue);
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .pricing-link:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
         /* Print Styles */
@@ -551,6 +845,11 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">Reykjavik Cocktails</div>
+            <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
             <nav class="nav">
                 <a href="#tech-stack">Technology Stack</a>
                 <a href="#roadmap">Development Roadmap</a>
@@ -763,7 +1062,7 @@
             <section id="roadmap" class="section">
                 <div class="section-header">
                     <h2>Development Roadmap</h2>
-                    <p class="description">The project is divided into two distinct phases, with Phase 1 focusing on core operational features and Phase 2 expanding into analytics, client portals, and advanced automation. Some Phase 2 features have already been implemented as part of the foundation work.</p>
+                    <p class="description">The project is divided into two distinct phases, with Phase 1 focusing on core operational features and Phase 2 expanding into analytics, client portals, and advanced scheduling and automation.</p>
                 </div>
 
                 <div class="roadmap-container">
@@ -775,9 +1074,9 @@
                             <h4>Gig Management System</h4>
                             <ul class="feature-list">
                                 <li>Interactive map of Iceland with all gig locations</li>
-                                <li>Comprehensive gig details (client info, requirements, timeline)</li>
-                                <li>Staff assignment and role management</li>
-                                <li>Real-time status updates and notifications</li>
+                                <li>Interactive calendar component</li>
+                                <li>Comprehensive gig details view (client info, requirements, timeline)</li>
+                                <li>Gig creation and editing, staff assignment and role management</li>
                                 <li>Document management</li>
                             </ul>
                         </div>
@@ -785,8 +1084,9 @@
                         <div class="feature-group">
                             <h4>Inventory Management</h4>
                             <ul class="feature-list">
-                                <li>Category-based product organization</li>
-                                <li>Automatic reorder point alerts</li>
+                                <li>Division-based product organization (kitchen, rvk-cocktails, vinskolin, cocktailskolin)</li>
+                                <li>Advanced inventory tracking and management</li>
+                                <li>Automatic notifications/alerts for low stock items</li>
                                 <li>Supplier information management</li>
                             </ul>
                         </div>
@@ -822,19 +1122,16 @@
                             <ul class="feature-list">
                                 <li class="implemented">User authentication and authorization</li>
                                 <li class="implemented">Role-based permissions (Admin, Contractor, Client)</li>
-                                <li>Availability tracking</li>
+                                <li>Team schedule and availability tracking</li>
                                 <li>Clock-in/out system</li>
                             </ul>
                         </div>
 
                         <div class="feature-group">
-                            <h4>Calendar & Scheduling</h4>
+                            <h4>Logs & Notification System</h4>
                             <ul class="feature-list">
-                                <li class="implemented">Integrated calendar view</li>
-                                <li>Conflict detection and prevention</li>
-                                <li>Recurring event support</li>
-                                <li>Team schedule visibility</li>
-
+                                <li>Full audit logs for all actions</li>
+                                <li>Real-time status updates and notifications</li>
                             </ul>
                         </div>
 
@@ -876,7 +1173,7 @@
 
                 <div class="card">
                     <h3>Infrastructure Requirements Analysis</h3>
-                    <p>The rvk Cocktails platform requires infrastructure that can handle:</p>
+                    <p>The Reykjavik Cocktails platform requires infrastructure that can handle:</p>
                     <ul style="list-style: none; margin: 1rem 0;">
                         <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Concurrent users: 10-50 members</li>
                         <li style="padding: 0.5rem 0; color: var(--text-secondary);">• Data storage: Approximately 1-2GB for inventory, events, and reports</li>
@@ -904,6 +1201,9 @@
                                     <li>99.99% uptime SLA</li>
                                     <li>Preview deployments for testing</li>
                                 </ul>
+                                <a href="https://vercel.com/pricing" target="_blank" rel="noopener noreferrer" class="pricing-link">
+                                    View Vercel Pricing →
+                                </a>
                             </div>
                             <div>
                                 <h5 style="color: var(--accent-green); margin-bottom: 1rem;">Database: MongoDB Atlas M2</h5>
@@ -914,6 +1214,9 @@
                                     <li>Built-in monitoring</li>
                                     <li>Encryption at rest and in transit</li>
                                 </ul>
+                                <a href="https://www.mongodb.com/pricing" target="_blank" rel="noopener noreferrer" class="pricing-link">
+                                    View MongoDB Pricing →
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -923,7 +1226,7 @@
             <!-- Post-Launch Support -->
             <section id="support" class="section">
                 <div class="section-header">
-                    <h2>Post-Launch Support Structure</h2>
+                    <h2>Support Plan</h2>
                     <p class="description">A comprehensive support plan ensures the platform remains stable, secure, and aligned with evolving requirements and needs.</p>
                 </div>
 
@@ -987,6 +1290,46 @@
     </footer>
 
     <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const nav = document.querySelector('.nav');
+        const navLinks = document.querySelectorAll('.nav a');
+
+        function toggleMenu() {
+            const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', !isOpen);
+            nav.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+        }
+
+        function closeMenu() {
+            hamburger.setAttribute('aria-expanded', 'false');
+            nav.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        }
+
+        // Toggle menu on hamburger click
+        hamburger.addEventListener('click', toggleMenu);
+
+        // Close menu when clicking on nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Close menu on backdrop click
+        nav.addEventListener('click', (e) => {
+            if (e.target === nav) {
+                closeMenu();
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && nav.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+
         // Color palette
         const colors = {
             bg: 'hsl(222, 47%, 11%)',
@@ -1068,7 +1411,7 @@
                     x: centerX,
                     height: 100,
                     color: colors.purple,
-                    components: ['React 19 Components', 'API Routes', 'NextAuth.js v4', 'JavaScript ES6+', 'Mapbox GL', 'FullCalendar']
+                    components: ['React 19 Components', 'API Routes', 'NextAuth.js v4', 'Mapbox GL', 'FullCalendar']
                 },
                 {
                     name: 'Data Layer',
@@ -1202,9 +1545,9 @@
 
             // Responsive process layout
             const processes = [
-                { name: 'Gig Creation', color: colors.blue, items: ['Event details', 'Guest count', 'Cocktail selection', 'Venue info'] },
+                { name: 'Gig Creation', color: colors.blue, items: ['Gig details', 'Staff assignment', 'Cocktail selection'] },
                 { name: 'Recipe Analysis', color: colors.purple, items: ['Ingredient lookup', 'Standard quantities', 'Garnish requirements', 'Glassware specs'] },
-                { name: 'Auto Calculations', color: colors.green, items: ['Per Gig & Week prep reports', 'Optional extension buffer', 'Prep timeline'] },
+                { name: 'Auto Calculations', color: colors.green, items: ['Spirits', 'Premixes ,Juices, Syrups', 'Glassware'] },
                 { name: 'Inventory Check', color: colors.orange, items: ['Current stock', 'Availability status', 'Supplier info', 'Cost calculations'] }
             ];
 
@@ -1315,8 +1658,8 @@
             // Output reports - responsive layout
             const outputs = [
                 { name: 'Shopping List', color: colors.blue, items: ['Missing ingredients', 'Supplier contacts', 'Cost estimates'] },
-                { name: 'Prep Report', color: colors.purple, items: ['Timeline steps', 'Batch recipes', 'Staff assignments'] },
-                { name: 'Equipment List', color: colors.green, items: ['Bar equipment', 'Glassware count', 'Transport needs'] }
+                { name: 'Prep Report', color: colors.purple, items: ['Per Gig report', 'Per Week report', 'Extension buffer (optional)'] },
+                { name: 'Equipment List', color: colors.green, items: ['BarStation equipment', 'WineStation equipment', 'Glassware count'] }
             ];
 
             const outputBoxWidth = Math.min(220, (width - margin * 2 - 40) / 3);
